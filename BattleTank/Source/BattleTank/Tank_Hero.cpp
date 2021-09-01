@@ -11,6 +11,8 @@ ATank_Hero::ATank_Hero()
 
 }
 
+
+
 // Called when the game starts or when spawned
 void ATank_Hero::BeginPlay()
 {
@@ -30,5 +32,10 @@ void ATank_Hero::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+void ATank_Hero::AimAt(FVector Hitlocation)
+{
+	auto ournametank = GetName();
+	UE_LOG(LogTemp, Warning, TEXT("%s Aiming at % s"), *ournametank, *Hitlocation.ToString());
 }
 

@@ -17,6 +17,21 @@ void ATankAiController::BeginPlay()
 	}
 
 }
+  // every Frame was call it
+void ATankAiController::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	if (GetPlayerTank())
+	{
+		// todo move towards 
+		
+		// aim at the player
+		GetControlledTank()->AimAt(GetPlayerTank()->GetActorLocation());
+		// Fire If Ready
+
+
+	}
+}
 
 
 ATank_Hero* ATankAiController::GetControlledTank() const
