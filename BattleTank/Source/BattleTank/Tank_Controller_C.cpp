@@ -43,7 +43,7 @@ void ATank_Controller_C::AimTowardCrossHair()
 	FVector Hitlocation; // Out Parameter
 	if (GetSightRayHitLocation(Hitlocation))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Look DIrection: % s"), *Hitlocation.ToString());
+		//UE_LOG(LogTemp, Warning, TEXT("Look DIrection: % s"), *Hitlocation.ToString());
 	}
 
 	
@@ -54,7 +54,11 @@ void ATank_Controller_C::AimTowardCrossHair()
 }
 bool ATank_Controller_C::GetSightRayHitLocation(FVector& OutHitLocation) const
 {
-	OutHitLocation = FVector(1.0);
+	int32 ViewportSizeX, ViewportSizeY;
+	GetViewportSize(ViewportSizeX, ViewportSizeY);
+	
+	auto ScreenLocation = FVector2D(ViewportSizeX* CrossHairXLocation,ViewportSizeY* CrossHairYLocation);
+	UE_LOG(LogTemp, Warning, TEXT("Screen Location : %s"), ScreenLocation);
 	
 	return true;
 }
