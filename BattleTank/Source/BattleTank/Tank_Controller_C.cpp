@@ -3,6 +3,14 @@
 #include "BattleTank.h"
 #include "Tank_Controller_C.h"
 
+void ATank_Controller_C::Tick(float DeltaTime)
+{
+	Super::Tick( DeltaTime );
+
+	AimTowardCrossHair();
+	
+}
+
 void ATank_Controller_C::BeginPlay()
 {
 	Super::BeginPlay();
@@ -19,12 +27,6 @@ void ATank_Controller_C::BeginPlay()
 
 }
 
-void ATank_Controller_C::Tick(float DeltaTime)
-{
-	Super::Tick( DeltaTime );
-	AimTowardCrossHair();
-	
-}
 
 
 
@@ -40,10 +42,11 @@ void ATank_Controller_C::AimTowardCrossHair()
 	{
 		return;
 	}
+
 	FVector Hitlocation; // Out Parameter
 	if (GetSightRayHitLocation(Hitlocation))
 	{
-		//UE_LOG(LogTemp, Warning, TEXT("Look DIrection: % s"), *Hitlocation.ToString());
+		UE_LOG(LogTemp, Warning, TEXT("Hit Location: % s"), *Hitlocation.ToString());
 	}
 
 	
@@ -52,13 +55,62 @@ void ATank_Controller_C::AimTowardCrossHair()
 	//if hits the ladnscape 
 	//Tell Controlled Tank to aim at This Point
 }
-bool ATank_Controller_C::GetSightRayHitLocation(FVector& OutHitLocation) const
+
+
+// Get World location of linetrace through crosshair , true if Hits Landscape
+bool ATank_Controller_C::GetSightRayHitLocation(FVector& HitLocation) const
 {
+	// Find the crosshair position in pixel Coordinates
+
 	int32 ViewportSizeX, ViewportSizeY;
+
 	GetViewportSize(ViewportSizeX, ViewportSizeY);
+
+	auto ScreenLocation = FVector2D (ViewportSizeX * CrossHairXLocation, ViewportSizeY * CrossHairYLocation);
 	
-	auto ScreenLocation = FVector2D(ViewportSizeX* CrossHairXLocation,ViewportSizeY* CrossHairYLocation);
-	UE_LOG(LogTemp, Warning, TEXT("Screen Location : %s"), ScreenLocation);
+	FVector LookDirection;
+
+	if (GetLookDirection(ScreenLocation, LookDirection))
+	{
+		// Line-Trace along that lookDirection , and see what we hit (up to max Range)
+		GetLookVectorHitLocation(LookDirection, HitLocation);
+	}
+	
+
 	
 	return true;
 }
+// why we put const on the last ? cause we dont want change any variable members
+bool ATank_Controller_C::GetLookVectorHitLocation(FVector LookDirection, FVector & HitLocation) const
+{
+	FHitResult Hitresult;
+	auto startlocation = PlayerCameraManager->GetCameraLocation();
+	auto endlocation = startlocation + (LookDirection * linetracerange);
+	if (GetWorld()->LineTraceSingleByChannel(Hitresult, startlocation, endlocation, ECollisionChannel::ECC_Visibility)
+		)
+	{
+		//sit Hit location
+		HitLocation = Hitresult.Location;
+		return true;
+	}
+	HitLocation = FVector(0);
+	return false; //line trace	Didn't succeed
+}
+bool ATank_Controller_C::GetLookDirection(FVector2D ScreenLocation, FVector& LookDirection) const
+{
+
+	FVector cameraworldlocation; //to be Discard
+	
+	return DeprojectScreenPositionToWorld(
+
+		ScreenLocation.X,
+		ScreenLocation.Y,
+		cameraworldlocation,
+		LookDirection
+
+		
+	);
+	
+}
+
+
