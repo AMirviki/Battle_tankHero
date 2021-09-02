@@ -2,9 +2,14 @@
 
 #pragma once
 
+
 #include "CoreMinimal.h"
+#include <TankAimingComponent.h>
 #include "GameFramework/Pawn.h"
 #include "Tank_Hero.generated.h"
+
+
+class UTankAimingComponent;
 
 UCLASS()
 class BATTLETANK_API ATank_Hero : public APawn
@@ -14,13 +19,18 @@ class BATTLETANK_API ATank_Hero : public APawn
 public:
 	// Sets default values for this pawn's properties
 	ATank_Hero();
+
 	void AimAt(FVector Hitlocation);
 
 protected:
+	
+	UTankAimingComponent* TankAimingComponent = nullptr;
+
+	
+
+private:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 

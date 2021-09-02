@@ -84,8 +84,8 @@ bool ATank_Controller_C::GetSightRayHitLocation(FVector& HitLocation) const
 bool ATank_Controller_C::GetLookVectorHitLocation(FVector LookDirection, FVector & HitLocation) const
 {
 	FHitResult Hitresult;
-	auto startlocation = PlayerCameraManager->GetCameraLocation();
-	auto endlocation = startlocation + (LookDirection * linetracerange);
+	FVector startlocation = PlayerCameraManager->GetCameraLocation();
+	FVector endlocation = startlocation + (LookDirection * linetracerange);
 	if (GetWorld()->LineTraceSingleByChannel(Hitresult, startlocation, endlocation, ECollisionChannel::ECC_Visibility)
 		)
 	{
